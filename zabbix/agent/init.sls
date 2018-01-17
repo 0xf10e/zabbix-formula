@@ -1,6 +1,5 @@
 {% from "zabbix/map.jinja" import zabbix with context -%}
 
-
 zabbix-agent:
   pkg.installed:
     - pkgs:
@@ -15,3 +14,20 @@ zabbix-agent:
     - enable: True
     - require:
       - pkg: zabbix-agent
+      - file: zabbix-agent-logdir
+      - file: zabbix-agent-piddir
+
+zabbix-agent-logdir:
+  file.directory:
+    - name: {{ salt['file.dirname'](zabbix.agent.logfile) }}
+    - user: {{ zabbix.user }}
+    - group: {{ zabbix.group }}
+    - dirmode: 755
+
+zabbix-agent-piddir:
+  file.directory:
+    - name: {{ salt['file.dirname'](zabbix.agent.pidfile) }}
+    - user: {{ zabbix.user }}
+    - group: {{ zabbix.group }}
+    - dirmode: 750
+
